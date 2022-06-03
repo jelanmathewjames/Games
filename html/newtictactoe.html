@@ -24,19 +24,19 @@
         </div>
         <div style="display: none;" id="playboard">
             <div style="margin-top: 50px;">
-                <button type="button" class="btn btn-dark " style="height: 40px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
+                <button type="button" class="btn btn-dark " style="height: 40px;" id="button0" onclick="buttonAction(0)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button1" onclick="buttonAction(1)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button2" onclick="buttonAction(2)">+</button>
             </div>
             <div style="margin-top: 10px;">
-                <button type="button" class="btn btn-dark" style="height: 40px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
+                <button type="button" class="btn btn-dark" style="height: 40px;" id="button3" onclick="buttonAction(3)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button4" onclick="buttonAction(4)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button5" onclick="buttonAction(5)">+</button>
             </div>
             <div style="margin-top: 10px;">
-                <button type="button" class="btn btn-dark" style="height: 40px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
-                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;"></button>
+                <button type="button" class="btn btn-dark" style="height: 40px;" id="button6" onclick="buttonAction(6)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button7" onclick="buttonAction(7)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button8" onclick="buttonAction(8)">+</button>
             </div>
         </div>
             
@@ -50,7 +50,9 @@
 <script>
     let player1 
     let player2
-    let currentPlayer = "x"
+    let current_player = "x"
+    let icons = ["+","+","+","+","+","+","+","+","+"]
+    let count = 0
     function enterName(n){
         if(n == 1){
             player1 = document.getElementById("player1name").value
@@ -61,6 +63,18 @@
             document.getElementById("player2").style.display = "none"
             document.getElementById("playboard").style.display = "block"
         }
+    }
+    function changePlayer(current){
+        if(current == "x"){
+            current_player = "o"
+        }else if(current == "o"){
+            current_player = "x"
+        }
+    }
+    function buttonAction(position){
+        icons[position] = current_player
+        document.getElementById("button"+position).innerHTML = current_player
+        changePlayer(current_player)
     }
 </script>
 </html>
