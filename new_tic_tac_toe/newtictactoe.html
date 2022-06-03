@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <div class="justify-content-center text-center">
+        <h3 style="height: 30px;">New Tic Tac Toe</h3>
+        <div class="form-group col-lg-8 col-8 mx-auto" style="margin-top: 20px;">
+            <label id="warning"></label>
+        </div>
+        <div class="input-group col-lg-4" id="player1">
+            <input type="text" class="form-control" id="player1name" placeholder="Player1 Name" aria-label="Player1 Name" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="enterName(1)">Enter</button>
+            </div>
+        </div>
+        <div class="input-group col-lg-4" id="player2" style="display: none;">
+            <input type="text" class="form-control" id="player2name"placeholder="Player2 Name" aria-label="Player2 Name" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" onclick="enterName(2)">Enter</button>
+            </div>
+        </div>
+        <div style="display: none;" id="playboard">
+            <div style="margin-top: 50px;">
+                <button type="button" class="btn btn-dark " style="height: 40px;" id="button0" onclick="buttonAction(0)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button1" onclick="buttonAction(1)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button2" onclick="buttonAction(2)">+</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-dark" style="height: 40px;" id="button3" onclick="buttonAction(3)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button4" onclick="buttonAction(4)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button5" onclick="buttonAction(5)">+</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <button type="button" class="btn btn-dark" style="height: 40px;" id="button6" onclick="buttonAction(6)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button7" onclick="buttonAction(7)">+</button>
+                <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button8" onclick="buttonAction(8)">+</button>
+            </div>
+        </div>
+            
+    </div>
+    
+    
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="newtictactoe.js"></script>
+</html>
