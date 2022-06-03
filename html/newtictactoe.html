@@ -53,6 +53,8 @@
     let current_player = "x"
     let icons = ["+","+","+","+","+","+","+","+","+"]
     let count = 0
+    let move = null
+    let success = true
     function enterName(n){
         if(n == 1){
             player1 = document.getElementById("player1name").value
@@ -71,10 +73,93 @@
             current_player = "x"
         }
     }
-    function buttonAction(position){
-        icons[position] = current_player
-        document.getElementById("button"+position).innerHTML = current_player
-        changePlayer(current_player)
+    function playerMove(position){
+        if(count<6){
+            icons[position] = current_player
+            document.getElementById("button"+position).innerHTML = current_player
+            count++
+        }else{
+                if(move == null){
+                    if(icons[position] == current_player){
+                        move = position
+                    }else{
+                        alert("Not your Icon")
+                    }
+                    success = false
+                }else if(move != null){
+                    if(icons[position] == "+"){
+                        if(move == 0 &&  (position == 1 || position == 3 || position == 4)){
+
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move == 1 && (position == 0 || position == 2 || position == 4) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==2 && (position == 1 || position == 5 || position == 4) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==3 && (position == 4 || position == 0 || position == 6) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==4){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==5 && (position == 2 || position == 8 || position == 4)){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==6 && (position == 3 || position == 7 || position == 4) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==7 && (position == 6 || position == 8 || position == 4) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else if(move ==8 && (position == 5 || position == 7 || position == 4) ){
+                            [icons[position],icons[move]] = [icons[move],icons[position]]
+                            document.getElementById("button"+move).innerHTML = "+"
+                            document.getElementById("button"+position).innerHTML = current_player
+                            success = true
+                            move = null
+                        }else{
+                            alert("Cannot move to that Position")
+                            success = false
+                        }
+                    }else{
+                        alert("Already occupied")
+                        success = false
+                    }
+                }
+        }
+        
+    }
+    function buttonAction(button_num){
+        playerMove(button_num)
+        if(success){
+            changePlayer(current_player)
+        }
     }
 </script>
 </html>
