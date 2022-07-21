@@ -25,9 +25,13 @@
     }
     function playerMove(position){
         if(count<6){
-            icons[position] = current_player
-            document.getElementById("button"+position).innerHTML = current_player
-            count++
+            if(icons[position] == "+"){
+                icons[position] = current_player
+                document.getElementById("button"+position).innerHTML = current_player
+                count++
+            }else{
+                alert("Wrong entry")
+            }
         }else{
                 if(move == null){
                     if(icons[position] == current_player){
