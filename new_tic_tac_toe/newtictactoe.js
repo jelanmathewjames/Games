@@ -29,6 +29,7 @@
                 icons[position] = current_player
                 document.getElementById("button"+position).innerHTML = current_player
                 count++
+                success = true
             }else{
                 alert("Wrong entry")
                 success = false
