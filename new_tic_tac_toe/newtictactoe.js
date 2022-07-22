@@ -31,6 +31,7 @@
                 count++
             }else{
                 alert("Wrong entry")
+                success = false
             }
         }else{
                 if(move == null){
