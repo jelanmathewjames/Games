@@ -13,7 +13,11 @@
         <div class="form-group col-lg-8 col-8 mx-auto" style="margin-top: 20px;">
             <label id="warning"></label>
         </div>
-        <div class="input-group col-lg-4" id="player1">
+        <div class="justify-content-center text-center" id="mode">
+            <button type="button" class="btn btn-primary col-lg-7" onclick="playMode('1v1')" style="margin-top: 50px;">1 v 1 </button>
+            <button type="button" class="btn btn-primary col-lg-7" onclick="playMode('pc')" style="margin-top: 10px;">Computer</button>
+        </div>
+        <div class="input-group col-lg-4" id="player1" style="display: none;">
             <input type="text" class="form-control" id="player1name" placeholder="Player1 Name" aria-label="Player1 Name" aria-describedby="basic-addon2">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="button" onclick="enterName(1)">Enter</button>
