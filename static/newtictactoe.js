@@ -123,6 +123,9 @@ function checkWinner(){
         winningChanges()
     }
 }
+function botMove(){
+    pass
+}
 function buttonAction(button_num){
     playerMove(button_num)
     if(success){
