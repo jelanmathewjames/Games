@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'channels',
+    'newtictactoe',
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -57,13 +59,11 @@ ROOT_URLCONF = 'games.urls'
 
 CHANNEL_LAYERS = {
     'default':{
-        'BACKEND': 'asgi_redis.RedisChannelLayer',
-        'CONFIG':{
-            'hosts':[('localhost',6379)],
-        },
-        'ROUTING':'games.routing.channel_routing',
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
+
+ASGI_APPLICATION = 'games.asgi.application'
 
 TEMPLATES = [
     {
@@ -83,7 +83,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'games.wsgi.application'
 
-ASGI_APPLICATION = 'games.routing.application'
+
 
 
 # Database
@@ -91,8 +91,11 @@ ASGI_APPLICATION = 'games.routing.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd8jvvieun5psbu',
+        'USER': 'xhmwjihthqwzht',
+        'PASSWORD': '1d500a9c0b211eefe0cf779b92da2853cb07fbc00b040bfd9c4f5e27c637addc',
+        'HOST':'ec2-52-207-15-147.compute-1.amazonaws.com'
     }
 }
 

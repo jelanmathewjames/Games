@@ -6,9 +6,46 @@ let icons = ["+","+","+","+","+","+","+","+","+"]
 let count = 0
 let move = null
 let success = true
+
+$('#create').click(()=>{
+    
+    $.ajax({
+        url:'/newtictactoe/create',
+        method:'GET',
+        data:null,
+        datatype:'json',
+        success:(data)=>{
+            webSocketConnect(data.code)
+        }    
+    })
+    
+    
+})
+$('#join').click(()=>{
+    $.ajax({
+        url:'/newtictactoe/join',
+        method:'GET',
+        data:{'room_id':$('#roomid').val()},
+        datatype:'json',
+        success:(data)=>{
+            if(data.success=='true'){
+                webSocketConnect(data.code)
+            }else if(data.success == 'false'){
+                alert("No room founded for this ID")
+            }else if(data.success == 'full'){
+                alert("Room is full")
+            }
+        }
+    })
+})
+
+function webSocketConnect(code){
+    let url = 'ws://'+window.location.host+'/newtictactoe/'+code
+    const chatSocket = new WebSocket(url)
+}
 function playMode(mode){
     if(mode == '1v1'){
-        document.getElementById("player1").style.display = "flex"
+        document.getElementById("room").style.display = "flex"
         document.getElementById("mode").style.display = "none"
         playmode = mode
     }else if(mode == 'pc'){
@@ -17,17 +54,7 @@ function playMode(mode){
 }
 
     
-function enterName(n){
-    if(n == 1){
-        player1 = document.getElementById("player1name").value
-        document.getElementById("player1").style.display = "none"
-        document.getElementById("player2").style.display = "flex"
-    }else if(n ==2){
-        player2 = document.getElementById("player2name").value
-        document.getElementById("player2").style.display = "none"
-        document.getElementById("playboard").style.display = "block"
-    }
-}
+
 function changePlayer(){
     if(current_player == "x"){
         current_player = "o"
