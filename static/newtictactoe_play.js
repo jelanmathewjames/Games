@@ -1,7 +1,8 @@
-let playmode
-let player1 
-let player2
-let current_player = "x"
+const code = window.location.href.substring(window.location.href.lastIndexOf('/'))
+const url = 'ws://'+window.location.host+'/newtictactoe'+code
+const chatSocket = new WebSocket(url)
+
+
 let icons = ["+","+","+","+","+","+","+","+","+"]
 let count = 0
 let move = null
@@ -12,17 +13,6 @@ function changePosition(move,position){
     document.getElementById("button"+move).innerHTML = "+"
     document.getElementById("button"+position).innerHTML = current_player
     success = true
-}
-function winningChanges(){
-    if(current_player == 'x'){
-        document.getElementById("warning").innerHTML = player1+" winned The Game (refresh to play again)"
-    }else{
-        document.getElementById("warning").innerHTML = player2+" winned The Game (refresh to play again)"
-    }
-    setTimeout(()=>{document.getElementById("playboard").style.display = "none"},3000)
-    current_player = "x"
-    icons = ["+","+","+","+","+","+","+","+","+"]
-    count = 0
 }
 function playerMove(position){
     if(count<6){

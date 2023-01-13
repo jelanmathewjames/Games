@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('home',views.newtictactoe_home,name="newtictactoe_home"),
+    path('home',views.home,name="newtictactoe_home"),
     path('create',views.create,name="newtictactoe_create"),
-    path('join',views.join,name="newtictactoe_join")
+    path('join',views.join,name="newtictactoe_join"),
+    path('play/<room_id>',views.play,name="newtictactoe_play"),
 ]

@@ -34,13 +34,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',
     'newtictactoe',
     'home'
 ]
@@ -81,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'games.wsgi.application'
+
 
 
 
@@ -91,11 +91,9 @@ WSGI_APPLICATION = 'games.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'd8jvvieun5psbu',
-        'USER': 'xhmwjihthqwzht',
-        'PASSWORD': '1d500a9c0b211eefe0cf779b92da2853cb07fbc00b040bfd9c4f5e27c637addc',
-        'HOST':'ec2-52-207-15-147.compute-1.amazonaws.com'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR/'db.sqlite3',
+        
     }
 }
 

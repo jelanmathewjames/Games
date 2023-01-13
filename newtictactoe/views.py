@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from  home.models import GameRoom
 import math
 import random
 # Create your views here.
-def newtictactoe_home(request):
+def home(request):
     return render(request,'newtictactoe.html')
 
 def create(request):
@@ -15,10 +15,8 @@ def create(request):
             OTP += digits[math.floor(random.random()*10)]
 
         GameRoom.objects.create(room_id=OTP,game_name='newtictactoe',max_members=2)
-        return JsonResponse(
-            {'code':str(OTP)},
-            safe = False
-        )
+        print(OTP)
+        return redirect('play/'+OTP)
 
         
 def join(request):
@@ -26,11 +24,11 @@ def join(request):
         room_id = request.GET['room_id']
         room_details = GameRoom.objects.filter(room_id=room_id).first()
         if room_details:
-            if not room_details.current_occupancy >= room_details.max_members:
+
+            if room_details.current_occupancy < room_details.max_members:
                 return JsonResponse(
-                    {'success':'true',
-                     'code':room_id},
-                     safe = False
+                    {'success':'true','id':room_id},
+                    safe = False
                 )
             else:
                 return JsonResponse(
@@ -42,3 +40,7 @@ def join(request):
                 {'success':'false'},
                 safe = False
             )
+
+def play(request, room_id):
+    if request.method == 'GET':
+        return render(request,"newtictactoe_play.html")
