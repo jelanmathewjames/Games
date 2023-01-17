@@ -14,8 +14,15 @@
         <div class="form-group col-lg-8 col-8 mx-auto" style="margin-top: 20px;">
             <label id="warning"></label>
         </div>
+        <div>
+            <p>Select your side</p>
+            <button id="btnx" type="button" class="btn btn-danger">X</button>
+            <button id="btny" type="button" class="btn btn-danger">Y</button>
+            <p>Room id : <span id="room_id">{{id}}</span></p><p>Player Name : <span id="name">{{name}}</span></p>
+            <p>Opponent Name : <span id="opponent"></span></p>
+        </div>
         <div id="playboard">
-            <div style="margin-top: 50px;">
+            <div style="margin-top: 60px;">
                 <button type="button" class="btn btn-dark " style="height: 40px;" id="button0" onclick="buttonAction(0)">+</button>
                 <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button1" onclick="buttonAction(1)">+</button>
                 <button type="button" class="btn btn-dark" style="height: 40px; margin-left: 10px;" id="button2" onclick="buttonAction(2)">+</button>

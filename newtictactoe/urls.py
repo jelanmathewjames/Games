@@ -5,5 +5,5 @@ urlpatterns = [
     path('home',views.home,name="newtictactoe_home"),
     path('create',views.create,name="newtictactoe_create"),
     path('join',views.join,name="newtictactoe_join"),
-    path('play/<room_id>',views.play,name="newtictactoe_play"),
+    path('play',views.play,name="newtictactoe_play"),
 ]

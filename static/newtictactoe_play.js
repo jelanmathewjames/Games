@@ -1,13 +1,69 @@
-const code = window.location.href.substring(window.location.href.lastIndexOf('/'))
-const url = 'ws://'+window.location.host+'/newtictactoe'+code
+const url = 'ws://'+window.location.host+'/newtictactoe/'+$('#room_id').text()+'/'+$('#name').text()
 const chatSocket = new WebSocket(url)
+var player = ''
+var opponent = ''
+chatSocket.onopen = (e)=>{
+    chatSocket.send(
+        JSON.stringify({
+            type : "reload"
+        })
+    )
+}
+chatSocket.onmessage = (e)=>{
+    console.log("hello")
+    const data = JSON.parse(e.data)
+    if(data.type == 'select_side'){
+        console.log("side")
+    }else if(data.type == 'reload'){
+        if(player == ''){
+            player = data.name
+            chatSocket.send(
+                JSON.stringify({
+                    type : "opponent"
+                })
+            )
+        }
+    }else if(data.type == 'opponent'){
+        if(player == data.name){
+            console.log("checked")
+        }else if(opponent == ''){
+            opponent = data.name
+            $('#opponent').text(opponent)
+            chatSocket.send(
+                JSON.stringify({
+                    type : "opponent"
+                })
+            )
+        }
+    }
+}
 
-
-let icons = ["+","+","+","+","+","+","+","+","+"]
+$("#btnx").click(()=>{
+    chatSocket.send(
+        JSON.stringify({
+            command: "select_side",
+            info: 'x'
+        })
+    )
+    document.getElementById('btnx').className = "btn btn-success"
+})
+$("#btny").click(()=>{
+    document.getElementById('btny').className = "btn btn-success"
+})
+/*let icons = ["+","+","+","+","+","+","+","+","+"]
 let count = 0
 let move = null
 let success = true
 
+chatSocket.onmessage = (e)=>{
+    const data = JSON.parse(e.data)
+    const command = data.command
+    if(command == 'playermove'){
+        if(command.success == 'true')
+            changePosition(move,position)
+    }
+        
+}
 function changePosition(move,position){
     [icons[position],icons[move]] = [icons[move],icons[position]]
     document.getElementById("button"+move).innerHTML = "+"
@@ -85,13 +141,11 @@ function checkWinner(){
         winningChanges()
     }
 }
-function botMove(){
-    pass
-}
+
 function buttonAction(button_num){
     playerMove(button_num)
     if(success){
         checkWinner()
         changePlayer()
     }
-}
+}*/

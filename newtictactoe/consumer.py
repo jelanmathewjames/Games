@@ -5,25 +5,79 @@ from django.db.models import F
 from home.models import GameRoom
 
 class NewTictactoeConsumer(WebsocketConsumer):
-    players = {'player_side':{},'player_move':{}}
-    async def connect(self):
+    game_on = False
+    def connect(self):
        
         self.room_group_name = self.scope["url_route"]["kwargs"]["room_id"]
         
-        self.players['player_side'][self.channel_name] = None
-        self.players['player_move'][self.channel_name] = None
-        GameRoom.objects.filter(room_id=int(self.room_group_name)).update(current_occupancy = F('current_occupancy')+1)
-        await self.channel_layer.group_add(
+        room = GameRoom.objects.filter(room_id=int(self.room_group_name))
+        if room:
+            room.update(current_occupancy = F('current_occupancy')+1)
+        else:
+            GameRoom.objects.create(room_id=int(self.room_group_name),current_occupancy=1,max_members=2)
+        
+        async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
         )
-        
-    async def receive_json(self, content):
-        pass
+        self.accept()
 
-    async def disconnect(self,code):
+
+    def receive(self, text_data):
+        
+        text = json.loads(text_data)
+        if text['type'] == 'reload':
+            self.send(text_data=json.dumps({
+                'type':'reload',
+                'name': self.scope["url_route"]["kwargs"]["name"]
+            }))
+        elif text['type'] == 'opponent':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'opponent',
+                    'message': self.scope["url_route"]["kwargs"]["name"]
+                }
+            )
+        '''if text_data['command'] == 'select_side':
+            if self.players['player_side'][text_data['info']] == None:
+                self.players['player_side'][text_data['info']] = self.channel_name
+                self.send(text_data=json.dumps({
+                    'type': 'selected',
+                    'message':f'You are on',text_data['info'],'side'
+                }))
+            else:
+                self.send(text_data=json.dumps({
+                    'type': 'already selected',
+                    'message':f'Opponent have already locked {text_data['info']} side'
+                }))
+                
+            
+              '''
+        '''else:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                "type": "send_data"
+              
+                }
+            )'''
+        '''self.send(text_data=json.dumps({
+            'message':"lose the game"
+        }))'''
+    def opponent(self,data):
+        self.send(text_data=json.dumps({
+            'type':'opponent',
+            'name': data['message']
+        }))      
+    def send_data(self,data):
+        self.send(text_data=json.dumps({
+            'message':"lose the game"
+        }))   
+
+    def disconnect(self,code):
         self.disconnect_operation()
-        await self.channel_layer.group_discard(
+        async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
         )
