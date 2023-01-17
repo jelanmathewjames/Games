@@ -2,6 +2,7 @@ const url = 'ws://'+window.location.host+'/newtictactoe/'+$('#room_id').text()+'
 const chatSocket = new WebSocket(url)
 var player = ''
 var opponent = ''
+var player_side = ''
 chatSocket.onopen = (e)=>{
     chatSocket.send(
         JSON.stringify({
@@ -10,10 +11,19 @@ chatSocket.onopen = (e)=>{
     )
 }
 chatSocket.onmessage = (e)=>{
-    console.log("hello")
     const data = JSON.parse(e.data)
     if(data.type == 'select_side'){
-        console.log("side")
+        let side = data.message
+        if(player_side == ''){
+            if(data.message == 'X'){
+                player_side = side = 'O'
+            }else{
+                player_side = side = 'X'
+            }
+            alert(player+" selected "+side+" side")
+        }
+        console.log(side)
+        document.getElementById('btn'+side).className = "btn btn-success"
     }else if(data.type == 'reload'){
         if(player == ''){
             player = data.name
@@ -34,21 +44,52 @@ chatSocket.onmessage = (e)=>{
                     type : "opponent"
                 })
             )
+        }else if(opponent == data.name){
+            chatSocket.send(
+                JSON.stringify({
+                    type : "reload_opponent"
+                })
+            )
+        }
+    }else if(data.type == 'reload_opponent'){
+        if(opponent == ''){
+            opponent = data.name
+            $('#opponent').text(opponent)
+            chatSocket.send(
+                JSON.stringify({
+                    type : "opponent"
+                })
+            )
         }
     }
 }
 
-$("#btnx").click(()=>{
-    chatSocket.send(
-        JSON.stringify({
-            command: "select_side",
-            info: 'x'
-        })
-    )
-    document.getElementById('btnx').className = "btn btn-success"
+$("#btnX").click(()=>{
+    if(player_side == ''){
+        player_side = 'X'
+        chatSocket.send(
+            JSON.stringify({
+                type: "select_side",
+                message: 'X'
+            })
+        )
+    }else{
+        alert("player side already decided")
+    }
 })
-$("#btny").click(()=>{
-    document.getElementById('btny').className = "btn btn-success"
+$("#btnO").click(()=>{
+    if(player_side == ''){
+        player_side = 'O'
+        chatSocket.send(
+            JSON.stringify({
+                type: "select_side",
+                message: 'O'
+            })
+        )
+    }else{
+        alert("player side already decided")
+    }
+    
 })
 /*let icons = ["+","+","+","+","+","+","+","+","+"]
 let count = 0

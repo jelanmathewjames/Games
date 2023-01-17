@@ -31,11 +31,27 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 'type':'reload',
                 'name': self.scope["url_route"]["kwargs"]["name"]
             }))
+        elif text['type'] == 'select_side':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'select_side',
+                    'message': text['message']
+                }
+            )
         elif text['type'] == 'opponent':
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type':'opponent',
+                    'message': self.scope["url_route"]["kwargs"]["name"]
+                }
+            )
+        elif text['type'] == 'reload_opponent':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'reload_opponent',
                     'message': self.scope["url_route"]["kwargs"]["name"]
                 }
             )
@@ -65,9 +81,19 @@ class NewTictactoeConsumer(WebsocketConsumer):
         '''self.send(text_data=json.dumps({
             'message':"lose the game"
         }))'''
+    def select_side(self, data):
+        self.send(text_data=json.dumps({
+            'type':'select_side',
+            'message':data['message']
+        }))
     def opponent(self,data):
         self.send(text_data=json.dumps({
             'type':'opponent',
+            'name': data['message']
+        }))
+    def reload_opponent(self,data):
+        self.send(text_data=json.dumps({
+            'type':'reload_opponent',
             'name': data['message']
         }))      
     def send_data(self,data):
