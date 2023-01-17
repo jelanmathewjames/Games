@@ -22,7 +22,6 @@ chatSocket.onmessage = (e)=>{
             }
             alert(player+" selected "+side+" side")
         }
-        console.log(side)
         document.getElementById('btn'+side).className = "btn btn-success"
     }else if(data.type == 'reload'){
         if(player == ''){
@@ -47,7 +46,8 @@ chatSocket.onmessage = (e)=>{
         }else if(opponent == data.name){
             chatSocket.send(
                 JSON.stringify({
-                    type : "reload_opponent"
+                    type : "reload_opponent",
+                    side : player_side
                 })
             )
         }
@@ -55,6 +55,11 @@ chatSocket.onmessage = (e)=>{
         if(opponent == ''){
             opponent = data.name
             $('#opponent').text(opponent)
+            if(data.side == 'X'){
+                player_side = 'O'
+            }else{
+                player_side = 'X'
+            }document.getElementById('btn'+player_side).className = "btn btn-success"
             chatSocket.send(
                 JSON.stringify({
                     type : "opponent"
@@ -73,6 +78,8 @@ $("#btnX").click(()=>{
                 message: 'X'
             })
         )
+    }else if(opponent == ''){
+        alert("wait for opponent to join")
     }else{
         alert("player side already decided")
     }
@@ -86,6 +93,8 @@ $("#btnO").click(()=>{
                 message: 'O'
             })
         )
+    }else if(opponent == ''){
+        alert("wait for opponent to join")
     }else{
         alert("player side already decided")
     }

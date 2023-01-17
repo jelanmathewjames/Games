@@ -52,7 +52,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type':'reload_opponent',
-                    'message': self.scope["url_route"]["kwargs"]["name"]
+                    'message': self.scope["url_route"]["kwargs"]["name"],
+                    'side':text['side']
                 }
             )
         '''if text_data['command'] == 'select_side':
@@ -94,7 +95,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
     def reload_opponent(self,data):
         self.send(text_data=json.dumps({
             'type':'reload_opponent',
-            'name': data['message']
+            'name': data['message'],
+            'side':data['side']
         }))      
     def send_data(self,data):
         self.send(text_data=json.dumps({
