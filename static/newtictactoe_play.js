@@ -10,9 +10,27 @@ chatSocket.onopen = (e)=>{
         })
     )
 }
+function reset_game(){
+    document.getElementById('btn'+player_side).className = "btn btn-danger"
+    opponent = ''
+    player_side = ''
+    chatSocket.send(
+        JSON.stringify({
+            type : 'reset_game'
+        })
+    )
+}
 chatSocket.onmessage = (e)=>{
     const data = JSON.parse(e.data)
-    if(data.type == 'select_side'){
+    if(data.type == 'reload_after_game_on'){
+        if(player == data.name){
+            console.log(data.name)
+        }else{
+            alert("You have winned the game due to the reload of opponent")
+            reset_game()
+        }
+    }
+    else if(data.type == 'select_side'){
         let side = data.message
         if(player_side == ''){
             if(data.message == 'X'){
@@ -47,7 +65,6 @@ chatSocket.onmessage = (e)=>{
             chatSocket.send(
                 JSON.stringify({
                     type : "reload_opponent",
-                    side : player_side
                 })
             )
         }
@@ -55,48 +72,42 @@ chatSocket.onmessage = (e)=>{
         if(opponent == ''){
             opponent = data.name
             $('#opponent').text(opponent)
-            if(data.side == 'X'){
-                player_side = 'O'
-            }else{
-                player_side = 'X'
-            }document.getElementById('btn'+player_side).className = "btn btn-success"
-            chatSocket.send(
-                JSON.stringify({
-                    type : "opponent"
-                })
-            )
         }
     }
 }
 
 $("#btnX").click(()=>{
-    if(player_side == ''){
-        player_side = 'X'
-        chatSocket.send(
-            JSON.stringify({
-                type: "select_side",
-                message: 'X'
-            })
-        )
-    }else if(opponent == ''){
+    if(opponent == ''){
         alert("wait for opponent to join")
     }else{
-        alert("player side already decided")
+        if(player_side == ''){
+            player_side = 'X'
+            chatSocket.send(
+                JSON.stringify({
+                    type: "select_side",
+                    message: 'X'
+                })
+            )
+        }else{
+            alert("player side already decided")
+        }
     }
 })
 $("#btnO").click(()=>{
-    if(player_side == ''){
-        player_side = 'O'
-        chatSocket.send(
-            JSON.stringify({
-                type: "select_side",
-                message: 'O'
-            })
-        )
-    }else if(opponent == ''){
+    if(opponent == ''){
         alert("wait for opponent to join")
     }else{
-        alert("player side already decided")
+        if(player_side == ''){
+            player_side = 'O'
+            chatSocket.send(
+                JSON.stringify({
+                    type: "select_side",
+                    message: 'O'
+                })
+            )
+        }else{
+            alert("player side already decided")
+        }
     }
     
 })

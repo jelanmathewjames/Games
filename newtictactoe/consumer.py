@@ -26,7 +26,9 @@ class NewTictactoeConsumer(WebsocketConsumer):
     def receive(self, text_data):
         
         text = json.loads(text_data)
-        if text['type'] == 'reload':
+        if text['type'] == 'reset_game':
+            self.game_on = False
+        elif text['type'] == 'reload':
             self.send(text_data=json.dumps({
                 'type':'reload',
                 'name': self.scope["url_route"]["kwargs"]["name"]
@@ -53,7 +55,6 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 {
                     'type':'reload_opponent',
                     'message': self.scope["url_route"]["kwargs"]["name"],
-                    'side':text['side']
                 }
             )
         '''if text_data['command'] == 'select_side':
@@ -83,6 +84,7 @@ class NewTictactoeConsumer(WebsocketConsumer):
             'message':"lose the game"
         }))'''
     def select_side(self, data):
+        self.game_on = True
         self.send(text_data=json.dumps({
             'type':'select_side',
             'message':data['message']
@@ -96,13 +98,13 @@ class NewTictactoeConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'type':'reload_opponent',
             'name': data['message'],
-            'side':data['side']
         }))      
-    def send_data(self,data):
+      
+    def reload_after_game_on(self,data):
         self.send(text_data=json.dumps({
-            'message':"lose the game"
-        }))   
-
+            'type':'reload_after_game_on',
+            'name': data["name"]
+        }))
     def disconnect(self,code):
         self.disconnect_operation()
         async_to_sync(self.channel_layer.group_discard)(
@@ -111,6 +113,14 @@ class NewTictactoeConsumer(WebsocketConsumer):
         )
     
     def disconnect_operation(self):
+        if self.game_on == True:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'reload_after_game_on',
+                    'name':self.scope["url_route"]["kwargs"]["name"]
+                }
+            )
         room = GameRoom.objects.filter(room_id=int(self.room_group_name))
         if room.first().current_occupancy <= 1:
             room.delete()
