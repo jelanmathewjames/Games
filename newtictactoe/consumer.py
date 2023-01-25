@@ -27,7 +27,26 @@ class NewTictactoeConsumer(WebsocketConsumer):
     def receive(self, text_data):
         
         text = json.loads(text_data)
-        if text['type'] == 'movement':
+        if text['type'] == 'movement_after_setting':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'movement_after_setting',
+                    'name':self.scope['url_route']['kwargs']['name'],
+                    'move_icon':text['move_icon'],
+                    'position_icon':text['position_icon']
+                }
+            )
+        elif text['type'] == 'check_turn':
+            is_your_turn = False
+            if self.your_turn:
+                is_your_turn = True
+            self.send(text_data=json.dumps({
+                'type':'check_turn',
+                'is_your_turn': is_your_turn,
+                'button':text['button']
+            }))
+        elif text['type'] == 'movement':
             if self.your_turn:
                 async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
@@ -89,7 +108,20 @@ class NewTictactoeConsumer(WebsocketConsumer):
             'button':data['button'],
             'player_side':data['your_side']
         }))
-
+    def movement_after_setting(self, data):
+        turn = ''
+        if data['name'] == self.scope['url_route']['kwargs']['name']:
+            self.your_turn = False
+            turn = 'your'
+        else:
+            self.your_turn = True
+            turn = 'opponent'
+        self.send(text_data=json.dumps({
+            'type':'movement_after_setting',
+            'turn':turn,
+            'move_icon':data['move_icon'],
+            'position_icon':data['position_icon']
+        }))
     def select_side(self, data):
         self.game_on = True
         if data['name'] == self.scope['url_route']['kwargs']['name']:

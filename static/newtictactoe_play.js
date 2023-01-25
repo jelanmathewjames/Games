@@ -4,6 +4,7 @@ let player = ''
 let opponent = ''
 let player_side = ''
 let count = 0
+let move = null 
 let icons = ["+","+","+","+","+","+","+","+","+"]
 chatSocket.onopen = (e)=>{
     chatSocket.send(
@@ -27,6 +28,53 @@ function buttonAction(button_num){
         }else{
             alert("opponent already selected the icon")
         }
+    }else{
+        if(move == null){
+            chatSocket.send(
+                JSON.stringify({
+                    type : 'check_turn',
+                    button : button_num,
+                })
+            )
+        }else{
+            if(icons[button_num]== '+'){
+                let success = false
+                if(move == 0 &&  (button_num == 1 || button_num == 3 || button_num == 4)){
+                    success = true
+                }else if(move == 1 && (button_num == 0 || button_num == 2 || button_num == 4) ){
+                    success = true
+                }else if(move ==2 && (button_num == 1 || button_num == 5 || button_num == 4) ){
+                    success = true
+                }else if(move ==3 && (button_num == 4 || button_num == 0 || button_num == 6) ){
+                    success = true
+                }else if(move ==4){
+                    success = true
+                }else if(move ==5 && (button_num == 2 || button_num == 8 || button_num == 4)){
+                    success = true
+                }else if(move ==6 && (button_num == 3 || button_num == 7 || button_num == 4) ){
+                    success = true
+                }else if(move ==7 && (button_num == 6 || button_num == 8 || button_num == 4) ){
+                    success = true
+                }else if(move ==8 && (button_num == 5 || button_num == 7 || button_num == 4) ){
+                    success = true
+                }else{
+                    alert("Cannot move to that Position")
+                }
+                if(success){
+                    console.log("hello")
+                    icons[button] = icons[move]
+                    icons[move] = '+'
+                    chatSocket.send(JSON.stringify({
+                        type: 'movement_after_setting',
+                        move_icon: move,
+                        position_icon: button_num,
+                    }))
+                }
+            }else{
+                alert("position already occupied. select the position to move")
+                move = null
+            }
+        }
     }
 }
 function reset_game(){
@@ -41,7 +89,26 @@ function reset_game(){
 }
 chatSocket.onmessage = (e)=>{
     const data = JSON.parse(e.data)
-    if(data.type == 'movement'){
+    if(data.type == 'movement_after_setting'){
+        if(data.turn == 'your'){
+            document.getElementById('button'+data.position_icon).className == "btn btn-success"
+        }else if(data.turn == 'opponent'){
+            document.getElementById('button'+data.position_icon).className == "btn btn-success"
+        }
+        document.getElementById('button'+data.move_icon).className == "btn btn-dark"
+    }
+    else if(data.type == 'check_turn'){
+        if(data.is_your_turn){
+            if(icons[data.button] == player_side){
+                move = data.button
+                alert("Decide where to move")
+            }else{
+                alert("Not your icon")
+            }
+        }else{
+            alert("Not your turn")
+        }
+    }else if(data.type == 'movement'){
         if(data.turn == 'your'){
             document.getElementById('button'+data.button).className = "btn btn-success"
         }else if(data.turn == 'opponent'){
@@ -50,13 +117,14 @@ chatSocket.onmessage = (e)=>{
         document.getElementById('button'+data.button).innerHTML = data.player_side
         icons[data.button] = data.player_side
         count++
+        count >= 6?alert("You have fixed your icons. Move it"):console.log("not fixed")
     }else if(data.type == 'not_your_turn'){
         alert("Not your turn")
     }else if(data.type == 'reload_after_game_on'){
         if(player == data.name){
             console.log(data.name)
         }else{
-            alert("You have winned the game due to the reload of opponent")
+            alert("You have winned the game opponent disconnected or reloaded the game")
             reset_game()
         }
     }
