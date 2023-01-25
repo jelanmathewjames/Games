@@ -10,6 +10,15 @@ chatSocket.onopen = (e)=>{
         })
     )
 }
+function buttonAction(button_num){
+    chatSocket.send(
+        JSON.stringify({
+            type : 'movement',
+            button : button_num,
+            your_side : player_side
+        })
+    )
+}
 function reset_game(){
     document.getElementById('btn'+player_side).className = "btn btn-danger"
     opponent = ''
@@ -22,7 +31,16 @@ function reset_game(){
 }
 chatSocket.onmessage = (e)=>{
     const data = JSON.parse(e.data)
-    if(data.type == 'reload_after_game_on'){
+    if(data.type == 'movement'){
+        if(data.turn == 'your'){
+            document.getElementById('button'+data.button).className = "btn btn-success"
+        }else if(data.turn == 'opponent'){
+            document.getElementById('button'+data.button).className = "btn btn-danger"   
+        }
+        document.getElementById('button'+data.button).innerHTML = data.player_side
+    }else if(data.type == 'not_your_turn'){
+        alert("Not your turn")
+    }else if(data.type == 'reload_after_game_on'){
         if(player == data.name){
             console.log(data.name)
         }else{

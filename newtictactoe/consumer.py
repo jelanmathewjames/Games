@@ -6,6 +6,7 @@ from home.models import GameRoom
 
 class NewTictactoeConsumer(WebsocketConsumer):
     game_on = False
+    your_turn = False
     def connect(self):
        
         self.room_group_name = self.scope["url_route"]["kwargs"]["room_id"]
@@ -26,7 +27,22 @@ class NewTictactoeConsumer(WebsocketConsumer):
     def receive(self, text_data):
         
         text = json.loads(text_data)
-        if text['type'] == 'reset_game':
+        if text['type'] == 'movement':
+            if self.your_turn:
+                async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'movement',
+                        'name' : self.scope['url_route']['kwargs']['name'],
+                        'button': text['button'],
+                        'your_side': text['your_side']
+                    }
+                )
+            else:
+                self.send(text_data=json.dumps({
+                    'type': 'not_your_turn'
+                }))
+        elif text['type'] == 'reset_game':
             self.game_on = False
         elif text['type'] == 'reload':
             self.send(text_data=json.dumps({
@@ -38,7 +54,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type':'select_side',
-                    'message': text['message']
+                    'message': text['message'],
+                    'name': self.scope["url_route"]["kwargs"]["name"]
                 }
             )
         elif text['type'] == 'opponent':
@@ -57,34 +74,30 @@ class NewTictactoeConsumer(WebsocketConsumer):
                     'message': self.scope["url_route"]["kwargs"]["name"],
                 }
             )
-        '''if text_data['command'] == 'select_side':
-            if self.players['player_side'][text_data['info']] == None:
-                self.players['player_side'][text_data['info']] = self.channel_name
-                self.send(text_data=json.dumps({
-                    'type': 'selected',
-                    'message':f'You are on',text_data['info'],'side'
-                }))
-            else:
-                self.send(text_data=json.dumps({
-                    'type': 'already selected',
-                    'message':f'Opponent have already locked {text_data['info']} side'
-                }))
-                
-            
-              '''
-        '''else:
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                "type": "send_data"
-              
-                }
-            )'''
-        '''self.send(text_data=json.dumps({
-            'message':"lose the game"
-        }))'''
+
+    def movement(self, data):
+        turn = ''
+        if data['name'] == self.scope['url_route']['kwargs']['name']:
+            self.your_turn = False
+            turn = 'your'
+        else:
+            self.your_turn = True
+            turn = 'opponent'
+        self.send(text_data=json.dumps({
+            'type':'movement',
+            'turn':turn,
+            'button':data['button'],
+            'player_side':data['your_side']
+        }))
+
     def select_side(self, data):
         self.game_on = True
+        if data['name'] == self.scope['url_route']['kwargs']['name']:
+            if data['message'] == 'X':
+                self.your_turn = True
+        else:
+            if data['message'] == 'O':
+                self.your_turn = True
         self.send(text_data=json.dumps({
             'type':'select_side',
             'message':data['message']
