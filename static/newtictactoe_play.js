@@ -1,8 +1,10 @@
 const url = 'ws://'+window.location.host+'/newtictactoe/'+$('#room_id').text()+'/'+$('#name').text()
 const chatSocket = new WebSocket(url)
-var player = ''
-var opponent = ''
-var player_side = ''
+let player = ''
+let opponent = ''
+let player_side = ''
+let count = 0
+let icons = ["+","+","+","+","+","+","+","+","+"]
 chatSocket.onopen = (e)=>{
     chatSocket.send(
         JSON.stringify({
@@ -11,13 +13,21 @@ chatSocket.onopen = (e)=>{
     )
 }
 function buttonAction(button_num){
-    chatSocket.send(
-        JSON.stringify({
-            type : 'movement',
-            button : button_num,
-            your_side : player_side
-        })
-    )
+    if (count < 6){
+        if(icons[button_num] == '+'){
+            chatSocket.send(
+                JSON.stringify({
+                    type : 'movement',
+                    button : button_num,
+                    your_side : player_side
+                })
+            )
+        }else if(icons[button_num] == player_side){
+            alert("you cannot select icon that already selected")
+        }else{
+            alert("opponent already selected the icon")
+        }
+    }
 }
 function reset_game(){
     document.getElementById('btn'+player_side).className = "btn btn-danger"
@@ -38,6 +48,8 @@ chatSocket.onmessage = (e)=>{
             document.getElementById('button'+data.button).className = "btn btn-danger"   
         }
         document.getElementById('button'+data.button).innerHTML = data.player_side
+        icons[data.button] = data.player_side
+        count++
     }else if(data.type == 'not_your_turn'){
         alert("Not your turn")
     }else if(data.type == 'reload_after_game_on'){
