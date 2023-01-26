@@ -34,7 +34,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
                     'type':'movement_after_setting',
                     'name':self.scope['url_route']['kwargs']['name'],
                     'move_icon':text['move_icon'],
-                    'position_icon':text['position_icon']
+                    'position_icon':text['position_icon'],
+                    'button':text['button']
                 }
             )
         elif text['type'] == 'check_turn':
@@ -120,7 +121,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
             'type':'movement_after_setting',
             'turn':turn,
             'move_icon':data['move_icon'],
-            'position_icon':data['position_icon']
+            'position_icon':data['position_icon'],
+            'button':data['button']
         }))
     def select_side(self, data):
         self.game_on = True

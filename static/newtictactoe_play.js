@@ -61,13 +61,11 @@ function buttonAction(button_num){
                     alert("Cannot move to that Position")
                 }
                 if(success){
-                    console.log("hello")
-                    icons[button] = icons[move]
-                    icons[move] = '+'
                     chatSocket.send(JSON.stringify({
                         type: 'movement_after_setting',
                         move_icon: move,
                         position_icon: button_num,
+                        button:player_side
                     }))
                 }
             }else{
@@ -91,11 +89,16 @@ chatSocket.onmessage = (e)=>{
     const data = JSON.parse(e.data)
     if(data.type == 'movement_after_setting'){
         if(data.turn == 'your'){
-            document.getElementById('button'+data.position_icon).className == "btn btn-success"
+            document.getElementById('button'+data.position_icon).className = "btn btn-success"
         }else if(data.turn == 'opponent'){
-            document.getElementById('button'+data.position_icon).className == "btn btn-success"
+            document.getElementById('button'+data.position_icon).className ="btn btn-danger"
         }
-        document.getElementById('button'+data.move_icon).className == "btn btn-dark"
+        icons[data.position_icon] = icons[data.move_icon]
+        icons[data.move_icon] = '+'
+        move = null
+        document.getElementById('button'+data.move_icon).className = "btn btn-dark"
+        document.getElementById('button'+data.position_icon).innerHTML = data.button
+        document.getElementById('button'+data.move_icon).innerHTML = '+'
     }
     else if(data.type == 'check_turn'){
         if(data.is_your_turn){
