@@ -1,0 +1,1 @@
+web: gunicorn games.asgi --log-file -
