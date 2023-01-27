@@ -70,8 +70,6 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 self.send(text_data=json.dumps({
                     'type': 'not_your_turn'
                 }))
-        elif text['type'] == 'reset_game':
-            self.game_on = False
         elif text['type'] == 'reload':
             self.send(text_data=json.dumps({
                 'type':'reload',
@@ -160,7 +158,11 @@ class NewTictactoeConsumer(WebsocketConsumer):
             'type':'reload_opponent',
             'name': data['message'],
         }))      
-      
+    def reload_before_game_on(self,data):
+        self.send(text_data=json.dumps({
+            'type':'reload_before_game_on',
+            'name':data['name']
+        })) 
     def reload_after_game_on(self,data):
         self.your_turn = False
         self.game_on = False
@@ -182,6 +184,14 @@ class NewTictactoeConsumer(WebsocketConsumer):
                 {
                     'type':'reload_after_game_on',
                     'name':self.scope["url_route"]["kwargs"]["name"]
+                }
+            )
+        else:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'reload_before_game_on',
+                    'name':self.scope['url_route']['kwargs']['name']
                 }
             )
         room = GameRoom.objects.filter(room_id=int(self.room_group_name))

@@ -170,10 +170,14 @@ chatSocket.onmessage = (e)=>{
         }
     }else if(data.type == 'not_your_turn'){
         $('#alert').text("Not your turn")
+    }else if(data.type == 'reload_before_game_on'){
+        if(player != data.name){
+            $('#alert').text("Opponent disconnected reloaded the game")
+            opponent = ''
+            $('#opponent').text(opponent)
+        }
     }else if(data.type == 'reload_after_game_on'){
-        if(player == data.name){
-            console.log(data.name)
-        }else{
+        if(player != data.name){
             $('#alert').text("You have winned the game opponent disconnected or reloaded the game")
             reset_game()
         }
