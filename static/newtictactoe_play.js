@@ -44,9 +44,9 @@ function buttonAction(button_num){
                 })
             )
         }else if(icons[button_num] == player_side){
-            alert("you cannot select icon that already selected")
+            $('#alert').text("you cannot select icon that already selected")
         }else{
-            alert("opponent already selected the icon")
+            $('#alert').text("opponent already selected the icon")
         }
     }else{
         if(move == null){
@@ -78,7 +78,7 @@ function buttonAction(button_num){
                 }else if(move ==8 && (button_num == 5 || button_num == 7 || button_num == 4) ){
                     success = true
                 }else{
-                  alert("Cannot move to that Position")
+                    $('#alert').text("Cannot move to that Position")
                 }
                 if(success){
                     chatSocket.send(JSON.stringify({
@@ -89,7 +89,7 @@ function buttonAction(button_num){
                     }))
                 }
             }else{
-                alert("position already occupied. select the position to move")
+                $('#alert').text("position already occupied. select the position to move")
                 move = null
             }
         }
@@ -145,12 +145,12 @@ chatSocket.onmessage = (e)=>{
         if(data.is_your_turn){
             if(icons[data.button] == player_side){
                 move = data.button
-                alert("Decide where to move")
+                $('#alert').text("Decide where to move")
             }else{
-                alert("Not your icon")
+                $('#alert').text("Not your icon")
             }
         }else{
-            alert("Not your turn")
+            $('#alert').text("Not your turn")
         }
     }else if(data.type == 'movement'){
         let is_winned = false
@@ -166,15 +166,15 @@ chatSocket.onmessage = (e)=>{
         if(is_winned){
             winnerChanges()
         }else{
-            count >= 6?alert("You have fixed your icons. Move it"):console.log("not fixed")
+            count >= 6?$('#alert').text("You have fixed your icons. Move it"):console.log("not fixed")
         }
     }else if(data.type == 'not_your_turn'){
-        alert("Not your turn")
+        $('#alert').text("Not your turn")
     }else if(data.type == 'reload_after_game_on'){
         if(player == data.name){
             console.log(data.name)
         }else{
-            alert("You have winned the game opponent disconnected or reloaded the game")
+            $('#alert').text("You have winned the game opponent disconnected or reloaded the game")
             reset_game()
         }
     }
@@ -186,7 +186,7 @@ chatSocket.onmessage = (e)=>{
             }else{
                 player_side = side = 'X'
             }
-            alert(player+" selected "+side+" side")
+            $('#alert').text(player+" selected "+side+" side")
         }
         document.getElementById('btn'+side).className = "btn btn-success"
     }else if(data.type == 'reload'){
@@ -226,7 +226,7 @@ chatSocket.onmessage = (e)=>{
 
 $("#btnX").click(()=>{
     if(opponent == ''){
-        alert("wait for opponent to join")
+        $('alert').text("wait for opponent to join")
     }else{
         if(player_side == ''){
             player_side = 'X'
@@ -237,13 +237,13 @@ $("#btnX").click(()=>{
                 })
             )
         }else{
-            alert("player side already decided")
+            $('#alert').text("player side already decided")
         }
     }
 })
 $("#btnO").click(()=>{
     if(opponent == ''){
-        alert("wait for opponent to join")
+        $('#alert').text("wait for opponent to join")
     }else{
         if(player_side == ''){
             player_side = 'O'
@@ -254,7 +254,7 @@ $("#btnO").click(()=>{
                 })
             )
         }else{
-            alert("player side already decided")
+            $('#alert').text("player side already decided")
         }
     }
     
