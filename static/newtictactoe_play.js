@@ -14,29 +14,24 @@ chatSocket.onopen = (e)=>{
     )
 }
 function checkWinner(){
+    let is_winned = false
     if(icons[0]==icons[1] && icons[0]==icons[2] && icons[0]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[3]==icons[4]&& icons[3]==icons[5] && icons[3]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[6]==icons[7] && icons[6]==icons[8] && icons[6]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[0]==icons[4] && icons[0]==icons[8] && icons[0]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[2]==icons[4] && icons[2]==icons[6] && icons[2]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[0]==icons[3] && icons[0]==icons[6] && icons[0]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[1]==icons[4] && icons[1]==icons[7] && icons[1]!='+'){
-        winningChanges()
+        is_winned = true
     }else if(icons[2]==icons[5] && icons[2]==icons[8] && icons[2]!='+'){
-        winningChanges()
-    }
-}
-function winningChanges(){
-    chatSocket.send(
-        JSON.stringify({
-            type : "win_condition"
-        }))
+        is_winned = true
+    }return is_winned
 }
 function buttonAction(button_num){
     if (count < 6){
@@ -104,29 +99,47 @@ function reset_game(){
     document.getElementById('btn'+player_side).className = "btn btn-danger"
     opponent = ''
     player_side = ''
+    icons = ["+","+","+","+","+","+","+","+","+"]
+    let n = 0 
+    setTimeout(()=>{
+        while(n<=8){
+            document.getElementById('button'+n).className = "btn btn-dark"
+            document.getElementById('button'+n).innerHTML = '+'
+            n++
+        }window.location.reload()
+    },5000)
+    
+}
+function winnerChanges(){
     chatSocket.send(
         JSON.stringify({
-            type : 'reset_game'
+            type:'winner_declaration'
         })
     )
 }
 chatSocket.onmessage = (e)=>{
     const data = JSON.parse(e.data)
-    if(data.type == 'win_condition'){
-        alert("Winned condition")
+    icons[data.position_icon] = icons[data.move_icon]
+    icons[data.move_icon] = '+'
+    if(data.type == 'winner_declaration'){
+        $('#alert').text(data.name+" winned the game")
+        reset_game()
     }else if(data.type == 'movement_after_setting'){
+        let is_winned = false
         if(data.turn == 'your'){
             document.getElementById('button'+data.position_icon).className = "btn btn-success"
+            is_winned = checkWinner()
         }else if(data.turn == 'opponent'){
             document.getElementById('button'+data.position_icon).className ="btn btn-danger"
         }
-        icons[data.position_icon] = icons[data.move_icon]
-        icons[data.move_icon] = '+'
         move = null
         document.getElementById('button'+data.move_icon).className = "btn btn-dark"
         document.getElementById('button'+data.position_icon).innerHTML = data.button
         document.getElementById('button'+data.move_icon).innerHTML = '+'
-        checkWinner()
+        if(is_winned){
+            winnerChanges()
+        }
+        
     }
     else if(data.type == 'check_turn'){
         if(data.is_your_turn){
@@ -140,16 +153,21 @@ chatSocket.onmessage = (e)=>{
             alert("Not your turn")
         }
     }else if(data.type == 'movement'){
+        let is_winned = false
+        icons[data.button] = data.player_side
         if(data.turn == 'your'){
+            is_winned = checkWinner()
             document.getElementById('button'+data.button).className = "btn btn-success"
         }else if(data.turn == 'opponent'){
             document.getElementById('button'+data.button).className = "btn btn-danger"   
         }
         document.getElementById('button'+data.button).innerHTML = data.player_side
-        icons[data.button] = data.player_side
         count++
-        count >= 6?alert("You have fixed your icons. Move it"):console.log("not fixed")
-        checkWinner()
+        if(is_winned){
+            winnerChanges()
+        }else{
+            count >= 6?alert("You have fixed your icons. Move it"):console.log("not fixed")
+        }
     }else if(data.type == 'not_your_turn'){
         alert("Not your turn")
     }else if(data.type == 'reload_after_game_on'){

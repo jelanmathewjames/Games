@@ -27,7 +27,15 @@ class NewTictactoeConsumer(WebsocketConsumer):
     def receive(self, text_data):
         
         text = json.loads(text_data)
-        if text['type'] == 'movement_after_setting':
+        if text['type'] == 'winner_declaration':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type':'winner_declaration',
+                    'name':self.scope['url_route']['kwargs']['name']
+                }
+            )
+        elif text['type'] == 'movement_after_setting':
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
@@ -94,7 +102,13 @@ class NewTictactoeConsumer(WebsocketConsumer):
                     'message': self.scope["url_route"]["kwargs"]["name"],
                 }
             )
-
+    def winner_declaration(self, data):
+        self.your_turn = False
+        self.game_on = False
+        self.send(text_data=json.dumps({
+            'type':'winner_declaration',
+            'name':data['name']
+        }))
     def movement(self, data):
         turn = ''
         if data['name'] == self.scope['url_route']['kwargs']['name']:
@@ -148,6 +162,8 @@ class NewTictactoeConsumer(WebsocketConsumer):
         }))      
       
     def reload_after_game_on(self,data):
+        self.your_turn = False
+        self.game_on = False
         self.send(text_data=json.dumps({
             'type':'reload_after_game_on',
             'name': data["name"]
